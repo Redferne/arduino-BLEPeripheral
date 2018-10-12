@@ -42,7 +42,8 @@ uint32_t sd_ble_gatts_value_set(uint16_t handle, uint16_t offset, uint16_t* cons
     }                                           \
   } while (0)
 #else
-#define PRINT_ERROR(RET_CODE)
+#define APP_ERROR_CHECK(ERR_CODE)   null
+#define PRINT_ERROR(RET_CODE) // without this if NRF_52840_DEBUG is not set compiling will fail
 #endif
 
 #define APP_BLE_CONN_CFG_TAG             1
