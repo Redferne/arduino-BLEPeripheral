@@ -206,11 +206,11 @@ boolean  BLEPeripheral::setTxPower(int8_t txPower) {
 }
 
 #if defined(NRF52_S140)
-boolean setAdvertisingTxPower(int8_t txPower) {
+boolean BLEPeripheral::setAdvertisingTxPower(int8_t txPower) {
   return this->_device->setAdvertisingTxPower(txPower);
 }
 
-boolean setConnectedTxPower(int8_t txPower) {
+boolean BLEPeripheral::setConnectedTxPower(int8_t txPower) {
   return this->_device->setConnectedTxPower(txPower);
 }
 #endif
