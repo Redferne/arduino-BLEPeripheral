@@ -82,6 +82,7 @@ class nRF52840 : public BLEDevice
 
   private:
 
+    int8_t _txPower;
     unsigned char                     _advData[BLE_GAP_ADV_SET_DATA_SIZE_MAX];
     unsigned char                     _scanRsp[BLE_GAP_ADV_SET_DATA_SIZE_MAX];
     unsigned char                     _advHandle;
