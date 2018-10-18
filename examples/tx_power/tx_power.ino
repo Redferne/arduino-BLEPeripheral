@@ -12,6 +12,25 @@ BLEPeripheral blePeripheral = BLEPeripheral();
 BLEService ledService = BLEService("19b10000e8f2537e4f6cd104768a1214");
 BLECharCharacteristic switchCharacteristic = BLECharCharacteristic("19b10001e8f2537e4f6cd104768a1214", BLERead | BLEWrite);
 
+void blePeripheralConnectHandler(BLECentral& central) {
+  // central connected event handler
+#if defined(NRF52_S140)  
+  blePeripheral.setConnectedTxPower(4);
+#endif
+}
+
+void blePeripheralDisconnectHandler(BLECentral& central) {
+  // central disconnected event handler
+#if defined(NRF52_S140)  
+  blePeripheral.setAdvertisingTxPower(0);
+#endif
+}
+
+// central wrote new value to characteristics, update state
+void ledCharacteristicWritten(BLECentral& central, BLECharacteristic& characteristic) {
+  digitalWrite(LED_PIN, !switchCharacteristic.value());
+}
+
 void setup() {
   // set LED pins to output open drain mode
   pinMode(LED_PIN, OUTPUT_OPEN_DRAIN);
@@ -24,28 +43,22 @@ void setup() {
   // add service and characteristic
   blePeripheral.addAttribute(ledService);
   blePeripheral.addAttribute(switchCharacteristic);
-  //set tx power for both advertising and connected mode
-  blePeripheral.setTxPower(8);
+  // assign event handlers for connected, disconnected to peripheral
+  blePeripheral.setEventHandler(BLEConnected, blePeripheralConnectHandler);
+  blePeripheral.setEventHandler(BLEDisconnected, blePeripheralDisconnectHandler);
+
+  // assign event handlers for led characteristic
+  switchCharacteristic.setEventHandler(BLEWritten, ledCharacteristicWritten);
   // begin initialization
   blePeripheral.begin();
+  // must be called after begin()
+  //set tx power for both advertising and connected mode
+  blePeripheral.setTxPower(8);
   
   digitalWrite(LED_PIN, HIGH);
 }
 
 void loop() {
-  BLECentral central = blePeripheral.central();
-
-  if (central) {
-    while (central.connected()) {
-      // central still connected to peripheral
-      if (switchCharacteristic.written()) {
-        // central wrote new value to characteristic, update LED
-        if (switchCharacteristic.value()) {
-          digitalWrite(LED_PIN, LOW);
-        } else {
-          digitalWrite(LED_PIN, HIGH);
-        }
-      }
-    }
-  }
+  // poll peripheral
+  blePeripheral.poll();
 }
