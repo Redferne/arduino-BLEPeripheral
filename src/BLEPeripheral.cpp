@@ -205,6 +205,7 @@ boolean  BLEPeripheral::setTxPower(int8_t txPower) {
   return this->_device->setTxPower(txPower);
 }
 
+#if defined(NRF52_S140)
 boolean setAdvertisingTxPower(int8_t txPower) {
   return this->_device->setAdvertisingTxPower(txPower);
 }
@@ -212,6 +213,7 @@ boolean setAdvertisingTxPower(int8_t txPower) {
 boolean setConnectedTxPower(int8_t txPower) {
   return this->_device->setConnectedTxPower(txPower);
 }
+#endif
 
 void BLEPeripheral::setBondStore(BLEBondStore& bondStore) {
   this->_device->setBondStore(bondStore);
