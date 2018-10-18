@@ -78,8 +78,7 @@ nRF52840::nRF52840() :
   _remoteServiceDiscoveryIndex(0),
   _numRemoteCharacteristics(0),
   _remoteCharacteristicInfo(NULL),
-  _remoteRequestInProgress(false),
-  _txPower(0)
+  _remoteRequestInProgress(false)
 {
 #if defined(NRF5) || defined(NRF52_S140)
   this->_encKey = (ble_gap_enc_key_t*)&this->_bondData;
@@ -617,7 +616,7 @@ void nRF52840::poll() {
         this->_txBufferCount = BLE_GATTC_WRITE_CMD_TX_QUEUE_SIZE_DEFAULT;
 
       #if defined(NRF52_S140)
-        sd_ble_gap_tx_power_set(BLE_GAP_TX_POWER_ROLE_CONN, this->_connectionHandle, this->_txPower);
+        this->setConnectedTxPower(0);
       #endif
 
         if (this->_eventListener) {
@@ -1352,28 +1351,60 @@ bool isTxPowerValid(int txPower) {
 }
 
 /*
-Must be called before begin() method.
+Must be called after begin() method.
 
 Valid values are depending on the MCU:
   NRF52840: -40, -20, -16, -12, -8, -4, 0, 2, 3, 4, 5, 6, 7, 8
   NRF51822: -30, -20, -16, -12, -8, -4, 0, 4
   NRF52832: -40, -30, -20, -16, -12, -8, -4, 0, 4
 */
-bool nRF52840::setTxPower(int txPower) {
+
+#if defined(NRF51_S130) || defined(S132)
+boolean nRF52840::setTxPower(int txPower) {
+  uint32_t ret;
+  
   if (! isTxPowerValid(txPower)) {
     return false;
   }
-
-  this->_txPower = txPower;
   
-  // the sd_ble_gap_tx_power_set function signature changed in newer softdevices
-  // it allows setting tx power for advertising mode or connected mode and not for all modes at once as it was before
-  #if ! defined(NRF52_S140)
-    return sd_ble_gap_tx_power_set(this->_txPower) == NRF_SUCCESS;
-  #endif
+  ret = sd_ble_gap_tx_power_set(txPower) == NRF_SUCCESS;
+  PRINT_ERROR(ret);
   
-  return true;
+  return ret == NRF_SUCCESS;
 }
+#endif
+
+#if defined(NRF52_S140)
+boolean setAdvertisingTxPower(int8_t txPower) {
+  uint32_t ret;
+  
+  if (! isTxPowerValid(txPower)) {
+    return false;
+  }
+  
+  if (this->_advHandle) {
+    ret = sd_ble_gap_tx_power_set(BLE_GAP_TX_POWER_ROLE_ADV, this->_advHandle, txPower);
+    PRINT_ERROR(ret);
+  }
+  
+  return ret == NRF_SUCCESS;
+}
+
+boolean setConnectedTxPower(int8_t txPower) {
+  uint32_t ret;
+  
+  if (! isTxPowerValid(txPower)) {
+    return false;
+  }
+  
+  if (this->_connectionHandle) {
+    ret = sd_ble_gap_tx_power_set(BLE_GAP_TX_POWER_ROLE_CONN, this->_connectionHandle, txPower);
+    PRINT_ERROR(ret);
+  }
+  
+  return ret == NRF_SUCCESS;
+}
+#endif
 
 void nRF52840::faultHandler(uint32_t id, uint32_t pc, uint32_t info) {
     Serial.println("*** nRF52840 SD faultHandler");
@@ -1386,9 +1417,9 @@ void nRF52840::startAdvertising() {
   Serial.println(F("Start advertisement"));
 #endif
   uint32_t ret;
-
-  ret = sd_ble_gap_tx_power_set(BLE_GAP_TX_POWER_ROLE_ADV, _advHandle, this->_txPower);
-  PRINT_ERROR(ret);
+#if defined(NRF52_S140)
+  this->setAdvertisingTxPower(0);
+#endif
   ret = sd_ble_gap_adv_start(_advHandle, APP_BLE_CONN_CFG_TAG);
   PRINT_ERROR(ret);
 
