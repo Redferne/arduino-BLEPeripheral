@@ -1351,6 +1351,14 @@ bool isTxPowerValid(int txPower) {
   return false;
 }
 
+/*
+Must be called before begin() method.
+
+Valid values are depending on the MCU:
+  NRF52840: -40, -20, -16, -12, -8, -4, 0, 2, 3, 4, 5, 6, 7, 8
+  NRF51822: -30, -20, -16, -12, -8, -4, 0, 4
+  NRF52832: -40, -30, -20, -16, -12, -8, -4, 0, 4
+*/
 bool nRF52840::setTxPower(int txPower) {
   if (! isTxPowerValid(txPower)) {
     this->_txPower = 0;
@@ -1359,9 +1367,9 @@ bool nRF52840::setTxPower(int txPower) {
 
   this->_txPower = txPower;
   
-  #if defined(NRF52_S140)
-    return sd_ble_gap_tx_power_set(BLE_GAP_TX_POWER_ROLE_ADV, _advHandle, this->_txPower) == NRF_SUCCESS;
-  #else
+  // the sd_ble_gap_tx_power_set function signature changed in newer softdevices
+  // it allows setting tx power for advertising mode or connected mode and not for all modes at once as it was before
+  #if ! defined(NRF52_S140)
     return sd_ble_gap_tx_power_set(this->_txPower) == NRF_SUCCESS;
   #endif
 }
