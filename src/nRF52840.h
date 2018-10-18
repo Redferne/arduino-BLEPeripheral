@@ -82,7 +82,6 @@ class nRF52840 : public BLEDevice
 
   private:
 
-    int8_t _txPower;
     unsigned char                     _advData[BLE_GAP_ADV_SET_DATA_SIZE_MAX];
     unsigned char                     _scanRsp[BLE_GAP_ADV_SET_DATA_SIZE_MAX];
     unsigned char                     _advHandle;
@@ -105,6 +104,7 @@ class nRF52840 : public BLEDevice
     unsigned char                     _numRemoteCharacteristics;
     struct remoteCharacteristicInfo*  _remoteCharacteristicInfo;
     bool                              _remoteRequestInProgress;
+    int8_t                            _txPower;
     static void faultHandler(uint32_t id, uint32_t pc, uint32_t info);
 };
 
