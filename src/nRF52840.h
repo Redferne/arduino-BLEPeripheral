@@ -59,6 +59,8 @@ class nRF52840 : public BLEDevice
     virtual void end();
 
     virtual bool setTxPower(int txPower);
+    virtual boolean setConnectedTxPower(int8_t txPower);
+    virtual boolean setAdvertisingTxPower(int8_t txPower);
     virtual void startAdvertising();
     virtual void disconnect();
 
