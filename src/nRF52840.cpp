@@ -1352,15 +1352,11 @@ bool isTxPowerValid(int txPower) {
 }
 
 /*
-Must be called after begin() method.
-
 Valid values are depending on the MCU:
   NRF52840: -40, -20, -16, -12, -8, -4, 0, 2, 3, 4, 5, 6, 7, 8
   NRF51822: -30, -20, -16, -12, -8, -4, 0, 4
   NRF52832: -40, -30, -20, -16, -12, -8, -4, 0, 4
 */
-
-
 boolean nRF52840::setTxPower(int8_t txPower) {
   uint32_t ret = NRF_SUCCESS;
   
