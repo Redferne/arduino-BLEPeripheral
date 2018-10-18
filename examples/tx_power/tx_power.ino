@@ -14,16 +14,16 @@ BLECharCharacteristic switchCharacteristic = BLECharCharacteristic("19b10001e8f2
 
 void blePeripheralConnectHandler(BLECentral& central) {
   // central connected event handler
-#if defined(NRF52_S140)  
-  blePeripheral.setConnectedTxPower(4);
-#endif
+// #if defined(NRF52_S140)  
+//   blePeripheral.setConnectedTxPower(4);
+// #endif
 }
 
 void blePeripheralDisconnectHandler(BLECentral& central) {
   // central disconnected event handler
-#if defined(NRF52_S140)  
-  blePeripheral.setAdvertisingTxPower(0);
-#endif
+// #if defined(NRF52_S140)  
+//   blePeripheral.setAdvertisingTxPower(0);
+// #endif
 }
 
 // central wrote new value to characteristics, update state
@@ -49,11 +49,10 @@ void setup() {
 
   // assign event handlers for led characteristic
   switchCharacteristic.setEventHandler(BLEWritten, ledCharacteristicWritten);
-  // begin initialization
-  blePeripheral.begin();
-  // must be called after begin()
   //set tx power for both advertising and connected mode
   blePeripheral.setTxPower(8);
+  // begin initialization
+  blePeripheral.begin();
   
   digitalWrite(LED_PIN, HIGH);
 }
