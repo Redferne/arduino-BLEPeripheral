@@ -78,7 +78,8 @@ nRF52840::nRF52840() :
   _remoteServiceDiscoveryIndex(0),
   _numRemoteCharacteristics(0),
   _remoteCharacteristicInfo(NULL),
-  _remoteRequestInProgress(false)
+  _remoteRequestInProgress(false),
+  _txPower(0)
 {
 #if defined(NRF5) || defined(NRF52_S140)
   this->_encKey = (ble_gap_enc_key_t*)&this->_bondData;
@@ -616,7 +617,7 @@ void nRF52840::poll() {
         this->_txBufferCount = BLE_GATTC_WRITE_CMD_TX_QUEUE_SIZE_DEFAULT;
 
       #if defined(NRF52_S140)
-        this->setConnectedTxPower(0);
+        this->setConnectedTxPower(this->_txPower);
       #endif
 
         if (this->_eventListener) {
@@ -1359,22 +1360,25 @@ Valid values are depending on the MCU:
   NRF52832: -40, -30, -20, -16, -12, -8, -4, 0, 4
 */
 
-#if defined(NRF51_S130) || defined(S132)
+
 boolean nRF52840::setTxPower(int txPower) {
-  uint32_t ret;
+  uint32_t ret = NRF_SUCCESS;
   
   if (! isTxPowerValid(txPower)) {
     return false;
   }
   
-  ret = sd_ble_gap_tx_power_set(txPower) == NRF_SUCCESS;
+  this->_txPower = txPower;
+#if defined(NRF51_S130) || defined(S132)
+  ret = sd_ble_gap_tx_power_set(txPower);
+#endif
   PRINT_ERROR(ret);
   
   return ret == NRF_SUCCESS;
 }
-#endif
 
 #if defined(NRF52_S140)
+// has effect when in advertising mode only
 boolean setAdvertisingTxPower(int8_t txPower) {
   uint32_t ret;
   
@@ -1390,6 +1394,7 @@ boolean setAdvertisingTxPower(int8_t txPower) {
   return ret == NRF_SUCCESS;
 }
 
+// has effect only when connected
 boolean setConnectedTxPower(int8_t txPower) {
   uint32_t ret;
   
@@ -1418,7 +1423,7 @@ void nRF52840::startAdvertising() {
 #endif
   uint32_t ret;
 #if defined(NRF52_S140)
-  this->setAdvertisingTxPower(0);
+  this->setAdvertisingTxPower(this->_txPower);
 #endif
   ret = sd_ble_gap_adv_start(_advHandle, APP_BLE_CONN_CFG_TAG);
   PRINT_ERROR(ret);
