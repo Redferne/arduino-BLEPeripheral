@@ -201,11 +201,11 @@ void BLEPeripheral::setConnectable(bool connectable) {
   this->_device->setConnectable(connectable);
 }
 
-boolean  BLEPeripheral::setTxPower(int8_t txPower) {
+boolean BLEPeripheral::setTxPower(int8_t txPower) {
   return this->_device->setTxPower(txPower);
 }
 
-#if defined(NRF52_S140)
+#if defined(NRF52840)
 boolean BLEPeripheral::setAdvertisingTxPower(int8_t txPower) {
   return this->_device->setAdvertisingTxPower(txPower);
 }
