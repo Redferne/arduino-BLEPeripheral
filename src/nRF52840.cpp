@@ -1361,7 +1361,6 @@ Valid values are depending on the MCU:
 */
 bool nRF52840::setTxPower(int txPower) {
   if (! isTxPowerValid(txPower)) {
-    this->_txPower = 0;
     return false;
   }
 
@@ -1372,6 +1371,8 @@ bool nRF52840::setTxPower(int txPower) {
   #if ! defined(NRF52_S140)
     return sd_ble_gap_tx_power_set(this->_txPower) == NRF_SUCCESS;
   #endif
+  
+  return true;
 }
 
 void nRF52840::faultHandler(uint32_t id, uint32_t pc, uint32_t info) {
