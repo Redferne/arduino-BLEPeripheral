@@ -79,7 +79,7 @@ class BLEPeripheral : public BLEDeviceEventListener,
     // must be between  0x0006 (7.5 ms) and 0x0c80 (4 s), values outside of this range will be ignored
     void setConnectionInterval(unsigned short minimumConnectionInterval, unsigned short maximumConnectionInterval);
     boolean setTxPower(int8_t txPower);
-#if defined(NRF52_S140)    
+#if defined(NRF52840)    
     boolean setAdvertisingTxPower(int8_t txPower);
     boolean setConnectedTxPower(int8_t txPower);
 #endif    
