@@ -1379,7 +1379,7 @@ boolean nRF52840::setTxPower(int txPower) {
 
 #if defined(NRF52_S140)
 // has effect when in advertising mode only
-boolean setAdvertisingTxPower(int8_t txPower) {
+boolean nRF52840::setAdvertisingTxPower(int8_t txPower) {
   uint32_t ret;
   
   if (! isTxPowerValid(txPower)) {
@@ -1395,7 +1395,7 @@ boolean setAdvertisingTxPower(int8_t txPower) {
 }
 
 // has effect only when connected
-boolean setConnectedTxPower(int8_t txPower) {
+boolean nRF52840::setConnectedTxPower(int8_t txPower) {
   uint32_t ret;
   
   if (! isTxPowerValid(txPower)) {
