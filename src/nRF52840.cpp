@@ -1361,7 +1361,7 @@ Valid values are depending on the MCU:
 */
 
 
-boolean nRF52840::setTxPower(int txPower) {
+boolean nRF52840::setTxPower(int8_t txPower) {
   uint32_t ret = NRF_SUCCESS;
   
   if (! isTxPowerValid(txPower)) {
