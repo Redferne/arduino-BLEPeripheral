@@ -201,8 +201,16 @@ void BLEPeripheral::setConnectable(bool connectable) {
   this->_device->setConnectable(connectable);
 }
 
-bool  BLEPeripheral::setTxPower(int txPower) {
+boolean  BLEPeripheral::setTxPower(int8_t txPower) {
   return this->_device->setTxPower(txPower);
+}
+
+boolean setAdvertisingTxPower(int8_t txPower) {
+  return this->_device->setAdvertisingTxPower(txPower);
+}
+
+boolean setConnectedTxPower(int8_t txPower) {
+  return this->_device->setConnectedTxPower(txPower);
 }
 
 void BLEPeripheral::setBondStore(BLEBondStore& bondStore) {
