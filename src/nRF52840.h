@@ -104,6 +104,7 @@ class nRF52840 : public BLEDevice
     unsigned char                     _numRemoteCharacteristics;
     struct remoteCharacteristicInfo*  _remoteCharacteristicInfo;
     bool                              _remoteRequestInProgress;
+    int8_t                            _txPower;
     static void faultHandler(uint32_t id, uint32_t pc, uint32_t info);
 };
 
