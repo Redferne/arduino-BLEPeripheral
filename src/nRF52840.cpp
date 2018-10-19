@@ -1374,7 +1374,7 @@ boolean nRF52840::setTxPower(int8_t txPower) {
 }
 
 #if defined(NRF52_S140)
-// has effect when in advertising mode only
+// set tx power for advertising mode
 boolean nRF52840::setAdvertisingTxPower(int8_t txPower) {
   uint32_t ret;
   
@@ -1382,15 +1382,13 @@ boolean nRF52840::setAdvertisingTxPower(int8_t txPower) {
     return false;
   }
   
-  if (this->_advHandle) {
-    ret = sd_ble_gap_tx_power_set(BLE_GAP_TX_POWER_ROLE_ADV, this->_advHandle, txPower);
-    PRINT_ERROR(ret);
-  }
+  ret = sd_ble_gap_tx_power_set(BLE_GAP_TX_POWER_ROLE_ADV, this->_advHandle, txPower);
+  PRINT_ERROR(ret);
   
   return ret == NRF_SUCCESS;
 }
 
-// has effect only when connected
+// set tx power for when connected
 boolean nRF52840::setConnectedTxPower(int8_t txPower) {
   uint32_t ret;
   
@@ -1398,10 +1396,8 @@ boolean nRF52840::setConnectedTxPower(int8_t txPower) {
     return false;
   }
   
-  if (this->_connectionHandle) {
-    ret = sd_ble_gap_tx_power_set(BLE_GAP_TX_POWER_ROLE_CONN, this->_connectionHandle, txPower);
-    PRINT_ERROR(ret);
-  }
+  ret = sd_ble_gap_tx_power_set(BLE_GAP_TX_POWER_ROLE_CONN, this->_connectionHandle, txPower);
+  PRINT_ERROR(ret);
   
   return ret == NRF_SUCCESS;
 }
